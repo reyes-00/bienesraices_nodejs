@@ -1,0 +1,33 @@
+extends ../layout/includes/admin
+
+block contenido
+  div.py-10
+      h1.text-4xl.my-10.font-extrabold.text-center Bienes
+        span.font-normal Raices  
+      h2.text-center.text-2xl.font-extrabold= pagina
+
+      a(href="/propiedades/crear" class="bg-indigo-600 hover:bg-indigo-800 inline-block px-10 py-2 rounded text-white uppercase text-xs font-extrabold cursor-pointer mt-5 w-full sm:w-auto text-center mx-4" ) Publicar Propiedad 
+
+
+      form(action="/excel" method="POST" enctype="multipart/form-data")
+     
+        
+        input(type="file" class="bg-indigo-600 hover:bg-indigo-800 inline-block px-10 py-2 rounded text-white uppercase text-xs font-extrabold cursor-pointer mt-5 w-full sm:w-auto text-center mx-4" name="subidaArchivo")
+        input(type="submit" class="bg-indigo-600 hover:bg-indigo-800 inline-block px-10 py-2 rounded text-white uppercase text-xs font-extrabold cursor-pointer mt-5 w-full sm:w-auto text-center mx-4" value="Enviar")
+
+
+  table
+      thead
+        tr
+          th Columna 1
+          th Columna 2
+          th Columna 3
+          th Columna 4
+      tbody
+        each dato in consultadDatos
+            tr
+              td= dato.EAN
+              td= dato.DESCRIPCION
+              td= dato.ASINN
+              td= dato.FECHA_CRT
+
