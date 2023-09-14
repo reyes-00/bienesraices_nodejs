@@ -1,6 +1,6 @@
 import express from 'express';
 import csrf from 'csurf';
-import multer from 'multer';
+
 import cookieParser from 'cookie-parser';
 import UsuariosRoutes from "./routes/UsuariosRoutes.js";
 import PropiedadesRoutes from './routes/PropiedadesRoutes.js'
@@ -12,8 +12,7 @@ const app = express();
 // habilitar cookieParser
 app.use(cookieParser());
 
-//multer
-let upload = multer({ dest: 'uploads/' });
+
 // Hablitar csrf
 let csrfProtection = csrf({ cookie: true });
 
@@ -42,7 +41,7 @@ app.use(express.static('public'))
 
 app.use("/auth",csrfProtection, UsuariosRoutes)
 // Pasar la variable 'upload' al router de Propiedades
-app.use('/' /*csrfProtection*/,upload.single('subidaArchivo'),  PropiedadesRoutes);
+app.use('/' ,csrfProtection, PropiedadesRoutes);
 
 
 const port = process.env.PORT || 4000

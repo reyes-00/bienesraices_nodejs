@@ -5,6 +5,7 @@ import {validationResult} from 'express-validator'
 import { constants } from 'fs';
 
 const propiedadesIndex = async(req,res) =>{
+  console.log(req.usuario);
   let consultadDatos = [];
   consultadDatos = await Excel.findAll()
 
@@ -122,46 +123,42 @@ const agregarImagen = async(req, res) => {
 
   res.render("propiedades/ImagenPropiedad",{
     pagina: `Agrega una imagen para tu Propiedad: ${propiedad.titulo}`,
-    propiedad
+    propiedad,
+    csrfToken: req.csrfToken()
   })
 }
 
-const SubidaExcell = async(req, res) =>{
+const SubirPropiedad = async(req, res, next) =>{
+    //Leer el id
+    const {id} = req.params
 
-  try{
-    //Obtener datos del excel 
-    const datos = subidaExcel(req.file.path)
+    const propiedad = await Propiedad.findByPk(id)
     
-    for (const objeto of datos) {
-      const {EAN, DESCRIPCION,ASINN, FECHA_CRT} = objeto
-
-      const getDataExcel = await Excel.findOne({
-        where: {
-          EAN,
+    //Validar que exista
+    if(!propiedad){
+      return res.redirect("/mis-propiedades")
+    }
+  
+    //validar si ya subio una image
+    if(propiedad.publicado){
+      return res.redirect("/mis-propiedades")
+    }
     
-        },
-      })
+    //validar que la propiedad sea del usuaro
+    if(req.usuario.id !== propiedad.usuarioId){
+      return res.redirect("/mis-propiedades")
+    }
 
-      if(!getDataExcel){
-        await Excel.create({
-          EAN,
-          DESCRIPCION,
-          ASINN,
-          FECHA_CRT
-        })
-      }else{ 
-        console.log("entro");
-        await Excel.update({ DESCRIPCION:DESCRIPCION, ASINN:ASINN, FECHA_CRT:FECHA_CRT}, { where: {EAN} }); 
-      }
+    try {
+      //Almacenar la imagen
+      propiedad.imagen = req.file.filename
+      propiedad.publicado = 1
       
+      await propiedad.save();
+      next();
+    } catch (error) {
       
     }
-    return res.redirect("/mis-propiedades")
-  }catch(e) {
-    console.log(e);
-  }
-
-
 }
 
 
@@ -172,6 +169,6 @@ export {
   crear,
   guardar,
   agregarImagen,
-  SubidaExcell,
+  SubirPropiedad,
  
 }

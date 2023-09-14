@@ -1,7 +1,8 @@
 import express from 'express';
 import {body} from 'express-validator'
 import ProtegerRuta from '../middleware/ProtegerRuta.js';
-import {propiedadesIndex, crear, guardar, agregarImagen, SubidaExcell} from '../controllers/propiedadesController.js'
+import {propiedadesIndex, crear, guardar, agregarImagen, SubirPropiedad} from '../controllers/propiedadesController.js'
+import upload from '../middleware/subirImagen.js'
 
 const router = express.Router();
 
@@ -22,9 +23,8 @@ router.post('/propiedades/crear', ProtegerRuta,
             );
 
 router.get("/propiedades/agregar-imagen/:id",ProtegerRuta, agregarImagen)
-//router.post("/propiedades/agregar-imagen/:id",ProtegerRuta, SubirPropiedad)
 
+router.post("/propiedades/agregar-imagen/:id",ProtegerRuta, upload.single("imagen"), SubirPropiedad)
 
-router.post("/excel", SubidaExcell);
 
 export default router;

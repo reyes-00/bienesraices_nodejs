@@ -1,17 +1,19 @@
 extends ../layout/includes/admin
 block styles 
-  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css")
+  link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css")
+  meta(name="csrf_token" content= csrfToken)
 block contenido
 
- div.py-10
+  div.py-10
     h1.text-4xl.my-10.font-extrabold.text-center Bienes
       span.font-normal Raices  
     h2.text-center.text-2xl.font-extrabold= pagina
 
     div(class="bg-white shadow-lg mx-auto max-w-4xl py-8 px-4 rounded mt-8 md:px-10")
-      form(action=`/propiedades/agregar-imagen/${propiedad.id}` method="POST" id="imagen" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center")
+      form(action=`/propiedades/agregar-imagen/${propiedad.id}` method="POST" id="imagen" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" name="imagen")
         input(type="hidden" name="_csrf" value= csrfToken)
-  
-      input(type="submit" value="Publicar Propiedad" class="bg-indigo-500 uppercase text-sm font-extrabold text-center block px-4 py-2  mt-8 text-white w-full rounded cursor-pointer hover:bg-indigo-700")
+      
+      button(type="submit" id="publicar" class="bg-indigo-500 uppercase text-sm font-extrabold text-center block px-4 py-2  mt-8 text-white w-full rounded cursor-pointer hover:bg-indigo-700") Publicar Propiedad
+
 block scripts 
   script(src="/js/agregarImg.js") 
