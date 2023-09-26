@@ -1,7 +1,7 @@
 import express from 'express';
 import {body} from 'express-validator'
 import ProtegerRuta from '../middleware/ProtegerRuta.js';
-import {propiedadesIndex, crear, guardar, agregarImagen, SubirPropiedad,editarPropiedad, updatePropiedad, eliminar} from '../controllers/propiedadesController.js'
+import {propiedadesIndex, crear, guardar, agregarImagen, SubirPropiedad,editarPropiedad, updatePropiedad, eliminar,mostrarPropiedad} from '../controllers/propiedadesController.js'
 import upload from '../middleware/subirImagen.js'
 
 const router = express.Router();
@@ -39,5 +39,7 @@ router.post("/propiedades/editar/:id",ProtegerRuta,
   updatePropiedad)
 
 router.post("/propiedades/eliminar/:id",ProtegerRuta, eliminar)
+
+router.get("/propiedad/:id", mostrarPropiedad)
 
 export default router;

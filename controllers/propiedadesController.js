@@ -7,7 +7,16 @@ import { unlink } from 'node:fs/promises';
 const propiedadesIndex = async(req,res) =>{
   const id = req.usuario.id;
 
-  
+  //Leer datos del queryString 
+  const {pagina : paginaActual } = req.query;
+
+  //Le decimos que debe empezar con numero entero con ^ y terminar con numero con $
+  const expresion = /^[0-9]$/
+
+  if(!expresion.test(paginaActual)){
+    res.redirect("/mis-propiedades?pagina=1")
+  }
+
   let consultadDatos = [];
   consultadDatos = await Excel.findAll()
   
@@ -284,6 +293,28 @@ const eliminar = async (req, res) => {
 
 }
 
+const mostrarPropiedad = async(req, res) => {
+
+  //verificar que exista la propiedad	
+  const {id} = req.params
+
+  const propiedad = await Propiedad.findByPk(id,{
+    include: [
+      {model : Categoria, as: "categoria"},
+      {model: Precio, as: "precio"}
+    ]})
+
+
+  if(!propiedad){
+    return res.redirect("/404")
+  }
+
+  res.render("propiedades/mostrar",{
+    pagina:  `${propiedad.titulo}`,
+    propiedad
+  })
+}
+
 export {
   propiedadesIndex,
   crear,
@@ -292,6 +323,7 @@ export {
   SubirPropiedad,
   editarPropiedad,
   updatePropiedad,
-  eliminar
+  eliminar,
+  mostrarPropiedad
  
 }
