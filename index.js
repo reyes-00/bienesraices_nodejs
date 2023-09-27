@@ -4,6 +4,7 @@ import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
 import UsuariosRoutes from "./routes/UsuariosRoutes.js";
 import PropiedadesRoutes from './routes/PropiedadesRoutes.js'
+import AppRoutes from './routes/appRoutes.js'
 import db from './config/db.js'
 
 
@@ -38,10 +39,11 @@ app.set('views','./views')
 // Crear carpeta publica
 app.use(express.static('public'))
 
-
+app.use("/",AppRoutes)
 app.use("/auth",csrfProtection, UsuariosRoutes)
 // Pasar la variable 'upload' al router de Propiedades
 app.use('/' ,csrfProtection, PropiedadesRoutes);
+
 
 
 const port = process.env.PORT || 4000

@@ -4,37 +4,62 @@ import Excel from "../models/Excel.js";
 import {validationResult} from 'express-validator'
 import { unlink } from 'node:fs/promises';
 
+
 const propiedadesIndex = async(req,res) =>{
   const id = req.usuario.id;
 
+    
   //Leer datos del queryString 
   const {pagina : paginaActual } = req.query;
-
   //Le decimos que debe empezar con numero entero con ^ y terminar con numero con $
-  const expresion = /^[0-9]$/
+  const expresion = /^[1-9]$/
 
   if(!expresion.test(paginaActual)){
     res.redirect("/mis-propiedades?pagina=1")
   }
 
-  let consultadDatos = [];
-  consultadDatos = await Excel.findAll()
+
+  // let consultadDatos = [];
+  // consultadDatos = await Excel.findAll()
   
   //console.log(consultadDatos);
+
   try{
-    const PropiedadesUsuarios = await Propiedad.findAll({
-      where : {usuarioId : id}, 
-      include:[
-        {model : Categoria, as: "categoria"},
-        {model: Precio, as: "precio"}
-      ]
-    })
-    consultadDatos = await Excel.findAll();
+
+    
+    const limit = 2
+    
+    const offset = ((paginaActual * limit )- limit)
+
+    const [PropiedadesUsuarios,total] = await Promise.all([
+      
+      Propiedad.findAll({
+        limit,
+        offset,
+        where : {usuarioId : id}, 
+        include:[
+          {model : Categoria, as: "categoria"},
+          {model: Precio, as: "precio"}
+        ]
+      }),
+      Propiedad.count({
+        where: {
+          usuarioId: id
+        }
+      })
+    ])
+
+    //consultadDatos = await Excel.findAll();
 
       res.render('propiedades/index',{
         pagina : 'Tus Proiedades',
         csrfToken : req.csrfToken(),
-        consultadDatos,
+        //consultadDatos
+        paginaActual,
+        paginas: Math.ceil( total / limit),
+        offset,
+        limit,
+        total,
         PropiedadesUsuarios
       })
     
